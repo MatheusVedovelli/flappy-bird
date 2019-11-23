@@ -5,6 +5,7 @@ function setup()
     createCanvas(600, 800);
     frameRate(60);
     bird = new Bird();
+    pipes.push(new Pipe());
 }
 
 function mousePressed()
@@ -31,8 +32,7 @@ function draw()
 
         if(pipes[i].collide(bird.x, bird.y, bird.radius))
         {
-            console.log("colidiu");
-            noLoop();
+            //console.log("colidiu");
         }
 
         if(pipes[i].dead())
@@ -41,5 +41,6 @@ function draw()
         }
     }
 
+    bird.think(pipes[0]);
     bird.show();
 }

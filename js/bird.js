@@ -8,6 +8,12 @@ class Bird
         
         this.gravity = 0.5;
         this.speed = 0;
+
+        this.brain = new NeuralNetwork({
+            input: 5,
+            hidden: 10,
+            output: 2
+        });
     }
 
     jump()
@@ -20,6 +26,16 @@ class Bird
         this.speed += this.gravity;
         this.y += this.speed;
         this.y = constrain(this.y, 0, height);
+    }
+
+    think(pipe)
+    {
+        tf.tidy(() => {
+            let inputs = tf.tensor2d([this.x, this.y, pipe.x, pipe.top, height - pipe.bottom], [1, 5]);
+            let outputs = this.brain.predict(inputs).dataSync();
+            if(outputs[0] > outputs[1])
+                this.jump();
+        });
     }
 
     show()
