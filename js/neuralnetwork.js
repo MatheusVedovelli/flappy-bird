@@ -28,4 +28,46 @@ class NeuralNetwork
     {
         return this.model.predict(inputs);
     }
+
+    dispose()
+    {
+        this.model.dispose();
+    }
+
+    mutate(rate)
+    {
+        tf.tidy(() => {
+            const weights = this.model.getWeights();
+            const mutatedWeights = [];
+            for (let i = 0; i < weights.length; i++) 
+            {
+                let tensor = weights[i];
+                let shape = weights[i].shape;
+                let values = tensor.dataSync().slice();
+                for (let j = 0; j < values.length; j++) 
+                {
+                    if (random(1) < rate) 
+                    {
+                        let w = values[j];
+                        values[j] = w + randomGaussian();
+                    }
+                }
+                let newTensor = tf.tensor(values, shape);
+                mutatedWeights[i] = newTensor;
+            }
+            this.model.setWeights(mutatedWeights);
+        });
+    }
+
+    clone()
+    {
+        let newModel = this.createModel();
+        newModel.setWeights(this.model.getWeights());
+        return new NeuralNetwork({
+            input: this.input_nodes,
+            hidden: this.hidden_nodes,
+            output: this.output_nodes,
+            model: newModel
+        });
+    }
 }
