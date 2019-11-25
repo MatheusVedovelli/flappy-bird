@@ -15,6 +15,7 @@ function setup()
 {
     createCanvas(600, 800);
     frameRate(60);
+    tf.setBackend('cpu');
     
     for(let i = 0; i < POPMAX; i++)
     {
